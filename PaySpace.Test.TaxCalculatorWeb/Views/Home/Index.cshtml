@@ -1,0 +1,82 @@
+﻿@model PaySpace.Test.TaxCalculatorWeb.ViewModels.Home.HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+
+}
+
+<div class="text-center">
+    <div class="col-sm-12 col-sm-offset-6">
+        <h1>Tax Calculator</h1>
+        <form action="api/tax" method="post">
+            <div id="postcode-group" class="form-group">
+                <label for="postalCodeId">Postal Code</label>
+                <select id="postalCodeId" name="postalCodeId" class="form-control">
+                    @{
+                        if (Model.PostalCodes != null)
+                        {
+                            foreach (var item in Model.PostalCodes)
+                            {
+                                <option value="@item.Id">@string.Concat(item.Code, " - ", item.TaxCalculationType)</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div id="income-group" class="form-group">
+                <label for="income">Income</label>
+                <input id="income" name="income" type="text" class="form-control" value="0" />
+            </div>
+            <div>
+                <button id="calculate" class="btn btn-success">Calculate</button>
+            </div>
+            <div id="result-group" class="form-group">
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            $("#calculate").click(function (event) {
+                var formData = {
+                    postalCodeId: $("#postalCodeId").val(),
+                    income: $("#income").val(),
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "api/tax",
+                    data: JSON.stringify(formData),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8"
+                }).done(function (data) {
+                    console.log(data);
+                    if (data && data.success) {
+                        $("#result-group").html(
+                            '<div class="alert alert-warning">' + data.tax.toString() + '</div>'
+                        );
+                    }
+                    else if (data && !data.success) {
+                        $("#result-group").html(
+                            '<div class="alert alert-danger">' + data.error + '</div>'
+                        );
+                    } else {
+                        $("#result-group").html(
+                            '<div class="alert alert-danger">Unspecified error</div>'
+                        );
+                    }
+                }).fail(function (data) {
+                    $("form").html(
+                        '<div class="alert alert-danger">Could not reach server, please try again later.</div>'
+                    );
+                });
+
+                event.preventDefault();
+            });
+        });
+
+    </script>
+
+}

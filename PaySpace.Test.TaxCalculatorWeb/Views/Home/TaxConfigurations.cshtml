@@ -1,0 +1,44 @@
+﻿@model PaySpace.Test.TaxCalculatorWeb.ViewModels.Home.TaxConfigurationsViewModel
+@{
+    ViewData["Title"] = "Tax Configurations";
+}
+
+<div class="text-center">
+    <div class="col-sm-12 col-sm-offset-6">
+        <h1>Progressive Tax Rate Configurations</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Rate</th>
+                    <th scope="col">From Income</th>
+                    <th scope="col">To Income</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (Model.ProgressiveTaxRateConfigurations != null)
+                    {
+                        foreach (var item in Model.ProgressiveTaxRateConfigurations)
+                        {
+
+                            <tr>
+                                <th scope="row">@item.Id</th>
+                                <td>@item.Rate</td>
+                                <td>@item.FromIncome</td>
+                                @{
+                                    if (item.ToIncome != PaySpace.Test.TaxCalculatorWeb.Data.SeedData.MaxDecimal)
+                                    {
+                                        <td>@item.ToIncome</td>
+                                    } else {
+                                        <td>-</td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
